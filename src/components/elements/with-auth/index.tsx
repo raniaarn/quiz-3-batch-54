@@ -1,6 +1,6 @@
 export const withAuth = (Component: React.FC<any>) => {
   const WithAuth = (props: any) => {
-    const isLogin = false;
+    const isLogin = true;
 
     if (!isLogin) return (
       <div className="p-2 bg-[#8478bf] text-white pr-4">
