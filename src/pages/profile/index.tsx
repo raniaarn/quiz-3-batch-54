@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 
 export const Profile: NextPage = () => {
   return (
-    <Layout metaTitle="Home" metaDescription="Exercise with NextJs">
+    <Layout metaTitle="Profile" metaDescription="Your Profile Page">
       <div className="flex flex-col">
         <div className="flex-grow">
           <div className="px-2 pt-8 text-lg font-bold">
