@@ -2,9 +2,12 @@ import Link from 'next/link';
 
 export const Menu = () => {
   return (
-    <div className="flex">
+    <div className="flex mx-4">
       <Link href='/' className="w-1/2 w-full font-bold">
         Raniaarn's App
+      </Link>
+      <Link href='/users' className="2-1/2 underline px-8">
+        Users
       </Link>
       <Link href='/profile' className="2-1/2 underline ">
         Profile

@@ -21,7 +21,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, metaTitle, metaDescrip
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      {children}
+      <div className="mx-4">
+        {children}
+      </div>
       <Footer />
     </div>
   );
