@@ -2,12 +2,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
-  name: string;
+  users: string[];
 };
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>,
 ) {
-  res.status(200).json({ name: "John Doe" });
+  try {
+    const response = await (await fetch("https://dummyjson.com/users")).json();
+    res.status(200).json({ users: response });
+  } catch (error) {
+
+  }
 }
