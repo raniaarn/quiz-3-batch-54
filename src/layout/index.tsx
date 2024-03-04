@@ -10,7 +10,7 @@ type LayoutProps = {
 
 export const Layout: React.FC<LayoutProps> = ({ children, metaTitle, metaDescription }) => {
   return (
-    <div>
+    <div className="pb-8">
       <Head>
         <title>{`Raniaarn's App - ${metaTitle}`}</title>
         <meta
@@ -21,7 +21,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, metaTitle, metaDescrip
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <div className="mx-4">
+      <div className="mx-4 mb-16">
         {children}
       </div>
       <Footer />
