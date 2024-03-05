@@ -1,53 +1,65 @@
 import dynamic from "next/dynamic";
-import { Note, NotesApiResponse } from "./interface";
 import { Card } from "@/components/elements/card";
-import Link from "next/link";
+import { Box, Button, Flex, Grid, GridItem, effect } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Note } from "./interface";
+import { useRouter } from "next/router";
 
 const LayoutComponent = dynamic(
   () => import('@/layout').then(mod => mod.Layout)
 );
 
-function formatTimestampToDate(timestamp: any) {
-  const date = new Date(timestamp);
+export default function Notes() {
+  const router = useRouter()
+  const [notes, setNotes] = useState<Note[]>([])
 
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Bulan dimulai dari 0, tambahkan 1 untuk mendapatkan bulan yang benar
-  const day = date.getDate().toString().padStart(2, '0');
-
-  return `${day}-${month}-${year}`;
-}
-
-export default function Notes({ data }: NotesApiResponse) {
-  const notes = data.data
+  useEffect(() => {
+    async function fetchingData() {
+      const res = await fetch("https://paace-f178cafcae7b.nevacloud.io/api/notes")
+      const listNotes = await res.json();
+      setNotes(listNotes)
+    }
+    fetchingData();
+  }, [])
 
   return (
     <LayoutComponent metaTitle="Notes" metaDescription="Welcome to Raniaarn's App">
       <div className="px-2 pt-8 text-lg font-bold">
         Notes
       </div>
-      <div className="w-full">
-        {
-          notes.map((note: Note) =>
-          (
-            <div key={note.id} className="py-2">
-              <Link href={`/notes/${note.id}`}>
-                <Card
-                  title={note.title}
-                  description={note.description}
-                  timestamp={formatTimestampToDate(note.created_at)}>
-                </Card>
-              </Link>
-            </div>
-          )
-          )
-        }
-      </div>
+      <Box padding="5">
+        <Flex justifyContent="end">
+          <Button className="my-4" colorScheme="purple" onClick={() => router.push('/notes/add')}>
+            Add Notes
+          </Button>
+        </Flex>
+        <Flex>
+          <Grid templateColumns='repeat(3, 1fr)' gap={5}>
+            {
+              notes?.data?.map((item: Note) => (
+                <GridItem>
+                  <div key={item.id}>
+                    <Card
+                      title={item.title}
+                      description={item.description}
+                      deleteButton={true}
+                      editButton={true}
+                    >
+
+                    </Card>
+                  </div>
+                </GridItem>
+              ))
+            }
+          </Grid>
+        </Flex>
+      </Box>
     </LayoutComponent>
   )
 }
 
-export async function getStaticProps() {
-  const res = await fetch('https://paace-f178cafcae7b.nevacloud.io/api/notes');
-  const data = await res.json()
-  return { props: { data }, revalidate: 10 }
-}
+// export async function getStaticProps() {
+//   const res = await fetch('https://paace-f178cafcae7b.nevacloud.io/api/notes');
+//   const data = await res.json()
+//   return { props: { data }, revalidate: 10 }
+// }
