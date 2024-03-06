@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import { Card } from "@/components/elements/card";
-import { Box, Button, Flex, Grid, GridItem, effect } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, GridItem } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Note } from "./interface";
 import { useRouter } from "next/router";
@@ -12,6 +12,20 @@ const LayoutComponent = dynamic(
 export default function Notes() {
   const router = useRouter()
   const [notes, setNotes] = useState<Note[]>([])
+
+  const HandleDelete = async (id: any) => {
+    try {
+      const response = await fetch(
+        `https://paace-f178cafcae7b.nevacloud.io/api/notes/delete/${id}`,
+        {
+          method: "DELETE",
+        })
+      const result = await response.json();
+      if (result?.success) {
+        router.reload();
+      }
+    } catch (error) { }
+  };
 
   useEffect(() => {
     async function fetchingData() {
@@ -44,6 +58,8 @@ export default function Notes() {
                       description={item.description}
                       deleteButton={true}
                       editButton={true}
+                      onClickDelete={() => HandleDelete(item?.id)}
+                      onClickEdit={() => router.push(`/notes/edit/${item?.id}`)}
                     >
 
                     </Card>
