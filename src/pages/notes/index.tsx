@@ -1,15 +1,20 @@
 import dynamic from "next/dynamic";
 import { Card } from "@/components/elements/card";
-import { Box, Button, Flex, Grid, GridItem } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Box, Button, Flex, Grid, GridItem, Spinner } from "@chakra-ui/react";
+import { useState } from "react";
 import { Note } from "./interface";
 import { useRouter } from "next/router";
+import toast from 'react-hot-toast';
+import { useQueries } from "@/components/hooks/useQueries";
 
 const LayoutComponent = dynamic(
   () => import('@/layout').then(mod => mod.Layout)
 );
 
 export default function Notes() {
+  const { data, isLoading } = useQueries({
+    prefixUrl: "https://paace-f178cafcae7b.nevacloud.io/api/notes",
+  })
   const router = useRouter()
   const [notes, setNotes] = useState<Note[]>([])
 
@@ -24,17 +29,11 @@ export default function Notes() {
       if (result?.success) {
         router.reload();
       }
+      toast.success("Berhasil menghapus notes")
     } catch (error) { }
   };
 
-  useEffect(() => {
-    async function fetchingData() {
-      const res = await fetch("https://paace-f178cafcae7b.nevacloud.io/api/notes")
-      const listNotes = await res.json();
-      setNotes(listNotes)
-    }
-    fetchingData();
-  }, [])
+
 
   return (
     <LayoutComponent metaTitle="Notes" metaDescription="Welcome to Raniaarn's App">
@@ -47,28 +46,44 @@ export default function Notes() {
             Add Notes
           </Button>
         </Flex>
-        <Flex>
-          <Grid templateColumns='repeat(3, 1fr)' gap={5}>
-            {
-              notes?.data?.map((item: Note) => (
-                <GridItem>
-                  <div key={item.id}>
-                    <Card
-                      title={item.title}
-                      description={item.description}
-                      deleteButton={true}
-                      editButton={true}
-                      onClickDelete={() => HandleDelete(item?.id)}
-                      onClickEdit={() => router.push(`/notes/edit/${item?.id}`)}
-                    >
+        {
+          isLoading ? (
+            (
+              <Flex alignItems="center" justifyContent="center">
+                <Spinner
+                  thickness='4px'
+                  speed='0.65s'
+                  emptyColor='gray.200'
+                  color='blue.500'
+                  size='xl'
+                />
+              </Flex>
+            )
+          ) : (
+            <Flex>
+              <Grid templateColumns='repeat(3, 1fr)' gap={5}>
+                {
+                  data?.data?.map((item: Note) => (
+                    <GridItem>
+                      <div key={item.id}>
+                        <Card
+                          title={item.title}
+                          description={item.description}
+                          deleteButton={true}
+                          editButton={true}
+                          onClickDelete={() => HandleDelete(item?.id)}
+                          onClickEdit={() => router.push(`/notes/edit/${item?.id}`)}
+                        >
 
-                    </Card>
-                  </div>
-                </GridItem>
-              ))
-            }
-          </Grid>
-        </Flex>
+                        </Card>
+                      </div>
+                    </GridItem>
+                  ))
+                }
+              </Grid>
+            </Flex>
+          )
+        }
       </Box>
     </LayoutComponent>
   )

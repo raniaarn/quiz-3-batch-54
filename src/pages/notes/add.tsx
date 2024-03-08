@@ -1,15 +1,16 @@
 import dynamic from "next/dynamic";
-import { Card } from "@/components/elements/card";
 import { Grid, GridItem, Text, Input, Textarea, Button } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import toast from 'react-hot-toast';
+import { useMutation } from "@/components/hooks/useMutation";
 
 const LayoutComponent = dynamic(
   () => import('@/layout').then(mod => mod.Layout)
 );
 
 export default function AddNotes() {
+  const { mutate } = useMutation()
   const router = useRouter()
   const [notes, setNotes] = useState({
     title: "",
@@ -17,25 +18,12 @@ export default function AddNotes() {
   })
 
   const HandleSubmit = async () => {
-    try {
-      const url = "https://paace-f178cafcae7b.nevacloud.io/api/notes"
-      const response = await fetch(url,
-        {
-          method: 'POST',
-          headers: {
-            "Content-Type": "Application/json"
-          },
-          body: JSON.stringify(notes)
-        })
-      const result = await response.json()
-      if (result?.success) {
-        router.push('/notes')
-        toast.success("berhasil menambahkan notes")
-      }
-
-    } catch (error) {
-      toast.error("coba lagi")
-    }
+    const response = await mutate({
+      prefixUrl: "https://paace-f178cafcae7b.nevacloud.io/api/notes",
+      payload: notes,
+    })
+    console.log(response)
+    router.push('/notes')
   }
 
   return (
