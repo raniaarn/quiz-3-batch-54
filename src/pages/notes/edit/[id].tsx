@@ -35,9 +35,7 @@ export default function EditNotes() {
         }
       );
       const result = await response.json();
-      if (result?.success) {
-        router.push("/notes");
-      }
+      console.log(result)
     } catch (error) { }
   };
 
